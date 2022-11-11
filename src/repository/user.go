@@ -58,3 +58,25 @@ func (u user) GetUser(nameOrNick string) ([]modells.User, error) {
 	}
 	return users, nil
 }
+
+func (u user) GetUserById(ID uint64) (modells.User, error) {
+	rows, err := u.db.Query(
+		"SELECT id, name, nickaname, email, createdAt FROM users WHERE id = ?", ID)
+	if err != nil {
+		return modells.User{}, err
+	}
+	defer rows.Close()
+	var person modells.User
+	if rows.Next() {
+		if err = rows.Scan(
+			&person.ID,
+			&person.Name,
+			&person.NickName,
+			&person.CreatedAt,
+		); err != nil {
+			return modells.User{}, err
+		}
+
+	}
+	return person, nil
+}

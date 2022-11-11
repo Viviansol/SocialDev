@@ -6,8 +6,10 @@ import (
 	"api/src/repository"
 	"api/src/response"
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -67,7 +69,28 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 }
 func GetUserById(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Getting user by id"))
+	parameters := mux.Vars(r)
+	userId, err := strconv.ParseUint(parameters["userId"], 10, 64)
+	if err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+	db, err := dataBase.ConnectDataBase()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repo := repository.NewUserRepository(db)
+	user, err := repo.GetUserById(userId)
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+	response.JSON(w, http.StatusOK, user)
+
 }
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Deleting User"))
