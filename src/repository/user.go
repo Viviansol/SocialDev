@@ -92,3 +92,15 @@ func (u user) UpdateUser(Id uint64, user modells.User) error {
 	}
 	return nil
 }
+
+func (u user) DeleteUser(Id uint64) error {
+	statement, err := u.db.Prepare("DELETE * FROM users WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+	if _, err = statement.Exec(Id); err != nil {
+		return err
+	}
+	return nil
+}
