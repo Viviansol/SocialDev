@@ -61,7 +61,7 @@ func (u user) GetUser(nameOrNick string) ([]modells.User, error) {
 
 func (u user) GetUserById(ID uint64) (modells.User, error) {
 	rows, err := u.db.Query(
-		"SELECT id, name, nickaname, email, createdAt FROM users WHERE id = ?", ID)
+		"SELECT id, name, nickname, email, createdAt FROM users WHERE id = ?", ID)
 	if err != nil {
 		return modells.User{}, err
 	}
