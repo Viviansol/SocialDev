@@ -11,6 +11,7 @@ import (
 var (
 	StringConexaoBanco = ""
 	Porta              = 0
+	SecretKey          []byte
 )
 
 func LoadConfig() {
@@ -24,4 +25,5 @@ func LoadConfig() {
 	}
 
 	StringConexaoBanco = fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local", os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_DATABASE"))
+	SecretKey = []byte(os.Getenv("SECRET_KEY"))
 }
