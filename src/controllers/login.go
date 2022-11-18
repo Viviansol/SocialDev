@@ -44,7 +44,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, _ := authentication.CreateToken(savedUser.ID)
+	token, err := authentication.CreateToken(savedUser.ID)
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+	}
 	fmt.Println(token)
 
 	w.Write([]byte("You're logged!"))
