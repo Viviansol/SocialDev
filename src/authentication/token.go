@@ -6,6 +6,7 @@ import (
 	"fmt"
 	jwt "github.com/dgrijalva/jwt-go"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -46,4 +47,23 @@ func returnVerificationKey(token *jwt.Token) (interface{}, error) {
 		return nil, fmt.Errorf("signature method unexpected! %v", token.Header["alg"])
 	}
 	return config.SecretKey, nil
+}
+
+func ExtracUserID(r *http.Request) (uint64, error) {
+
+	tokenString := extractToken(r)
+	token, err := jwt.Parse(tokenString, returnVerificationKey)
+	if err != nil {
+		return 0, err
+	}
+
+	if permissions, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		userId, err := strconv.ParseUint(fmt.Sprintf("%.0f", permissions["userId"]), 10, 64)
+		if err != nil {
+			return 0, err
+		}
+		return userId, nil
+	}
+	return 0, errors.New("invalid token")
+
 }
