@@ -15,7 +15,7 @@ func NewUserRepository(db *sql.DB) *user {
 }
 
 func (u user) CreateUser(user modells.User) (uint64, error) {
-	statement, err := u.db.Prepare("INSERT INTO users(name, nickname, email, password) values (?,?,?,?)")
+	statement, err := u.db.Prepare("INSERT INTO users(name, nickName, email, password)VALUES(?,?,?,?)")
 	if err != nil {
 		return 0, err
 	}
@@ -35,7 +35,7 @@ func (u user) CreateUser(user modells.User) (uint64, error) {
 func (u user) GetUser(nameOrNick string) ([]modells.User, error) {
 	nameOrNick = fmt.Sprintf("%%%s%%", nameOrNick)
 	rows, err := u.db.Query(
-		"SELECT id, name, email, createdAt FROM users WHERE name LIKE ? or nickName LIKE ? ",
+		"SELECT id, name, nickName, email, createdAt FROM users WHERE name LIKE ? or nickName LIKE ? ",
 		nameOrNick, nameOrNick,
 	)
 	if err != nil {
@@ -49,8 +49,8 @@ func (u user) GetUser(nameOrNick string) ([]modells.User, error) {
 			&user.ID,
 			&user.Name,
 			&user.NickName,
-			user.Email,
-			user.CreatedAt,
+			&user.Email,
+			&user.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -106,7 +106,7 @@ func (u user) DeleteUser(Id uint64) error {
 }
 
 func (u user) GetUserByEmail(email string) (modells.User, error) {
-	rows, err := u.db.Query("SELECT id, password, FROM users WHERE email = ?", email)
+	rows, err := u.db.Query("SELECT id, password FROM users WHERE email = ?", email)
 	if err != nil {
 		return modells.User{}, err
 	}
@@ -119,5 +119,20 @@ func (u user) GetUserByEmail(email string) (modells.User, error) {
 		}
 	}
 	return user, nil
+
+}
+
+func (u user) FollowUser(userId, followerId uint64) error {
+	statement, err := u.db.Prepare("INSERT INTO followers(user_id, follower_id)VAlUES(?,?)")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err := statement.Exec(userId, followerId); err != nil {
+		return err
+	}
+
+	return nil
 
 }

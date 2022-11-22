@@ -7,7 +7,7 @@ CREATE TABLE users(
     name varchar(50) not null,
     nickName varchar(50) not null unique,
     email varchar(50) not null unique,
-    password varchar(20) not null unique,
+    password varchar(100) not null unique,
     createdAt timestamp default  current_timestamp()
 
 
@@ -26,3 +26,17 @@ CREATE TABLE followers(
     PRIMARY KEY (user_id, follower_id)
 
 )ENGINE = INNODB;
+
+
+insert into users(name, nickName, email, password)
+values
+("user1", "user_1", "user1@gmail.com","123456" ),
+("user2", "user_2", "user1@gmail.com","123456" ),
+("user3", "user_3", "user1@gmail.com","123456" ),
+("user4", "user_4", "user1@gmail.com","123456" ),
+
+    insert int followers(user_id, follower_id)
+values
+    (1,2),
+    (2,3),
+    (4,1)
