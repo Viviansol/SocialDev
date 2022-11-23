@@ -151,3 +151,9 @@ func (u user) UnfollowUser(userId, followerId uint64) error {
 	return nil
 
 }
+
+func (u user) SearchFollowers(id uint64) ([]modells.User, error) {
+	rows, err := u.db.Query(`select u.id, u.name, u.nickName, u.email, u.createdAt
+									from users u inner join followers on u.id = s.followers_id where s.user_id =?`, id)
+
+}
