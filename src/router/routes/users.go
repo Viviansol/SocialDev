@@ -58,4 +58,10 @@ var usersRoutes = []Route{
 		Function:              controllers.SearchFollowing,
 		RequireAuthentication: true,
 	},
+	{
+		Uri:                   "/users/{userId}/UpdatePassword",
+		Method:                http.MethodPost,
+		Function:              controllers.UpdatePassword,
+		RequireAuthentication: true,
+	},
 }

@@ -209,3 +209,42 @@ func (u user) SearchFollowing(id uint64) ([]modells.User, error) {
 	return users, nil
 
 }
+
+func (u user) SearchPasswordById(id uint64) (string, error) {
+
+	row, err := u.db.Query("SELECT password FROM users WHERE id = ?", id)
+
+	if err != nil {
+		return " ", err
+	}
+
+	defer row.Close()
+
+	var user modells.User
+	if row.Next() {
+		if err = row.Scan(
+			&user.Password,
+		); err != nil {
+			return " ", err
+		}
+
+	}
+
+	return user.Password, nil
+}
+
+func (u user) UpdatePassword(userID uint64, password string) error {
+	statement, err := u.db.Prepare("UPDATE users SET password = ? where id =?")
+
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	if _, err := statement.Exec(password, userID); err != nil {
+		return err
+	}
+
+	return nil
+}

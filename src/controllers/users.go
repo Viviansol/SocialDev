@@ -6,6 +6,7 @@ import (
 	"api/src/modells"
 	"api/src/repository"
 	"api/src/response"
+	"api/src/security"
 	"encoding/json"
 	"errors"
 	"github.com/gorilla/mux"
@@ -283,4 +284,66 @@ func SearchFollowing(w http.ResponseWriter, r *http.Request) {
 		response.Erro(w, http.StatusInternalServerError, err)
 	}
 	response.JSON(w, http.StatusOK, users)
+}
+
+func UpdatePassword(w http.ResponseWriter, r *http.Request) {
+	userIdToken, err := authentication.ExtracUserID(r)
+	if err != nil {
+		response.Erro(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	parameters := mux.Vars(r)
+	userId, err := strconv.ParseUint(parameters["userId"], 10, 64)
+	if err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if userIdToken != userId {
+		response.Erro(w, http.StatusForbidden, errors.New("You can't update an user different of yours "))
+		return
+	}
+
+	requestBody, err := io.ReadAll(r.Body)
+	var password modells.Password
+	if err = json.Unmarshal(requestBody, &password); err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := dataBase.ConnectDataBase()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repo := repository.NewUserRepository(db)
+
+	passwordInTheDb, err := repo.SearchPasswordById(userId)
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if err = security.VerifyPassword(passwordInTheDb, password.Actual); err != nil {
+		response.Erro(w, http.StatusInternalServerError, errors.New("Actual password is not the same as the password stored in the db"))
+		return
+	}
+
+	passwordWithHash, err := security.Hash(password.New)
+	if err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err = repo.UpdatePassword(userId, string(passwordWithHash)); err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response.JSON(w, http.StatusNoContent, nil)
+
 }
