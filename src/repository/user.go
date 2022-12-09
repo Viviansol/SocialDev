@@ -156,4 +156,27 @@ func (u user) SearchFollowers(id uint64) ([]modells.User, error) {
 	rows, err := u.db.Query(`select u.id, u.name, u.nickName, u.email, u.createdAt
 									from users u inner join followers on u.id = s.followers_id where s.user_id =?`, id)
 
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+	var users []modells.User
+	for rows.Next() {
+		var user modells.User
+		if err = rows.Scan(
+			&user.ID,
+			&user.Name,
+			&user.NickName,
+			&user.CreatedAt,
+			&user.Email,
+		); err != nil {
+			return nil, err
+		}
+
+		users = append(users, user)
+
+	}
+	return users, nil
+
 }
