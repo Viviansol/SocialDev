@@ -114,6 +114,62 @@ func SearchPublicationById(w http.ResponseWriter, r *http.Request) {
 }
 func UpdatePublication(w http.ResponseWriter, r *http.Request) {
 
+	userId, err := authentication.ExtracUserID(r)
+	if err != nil {
+		response.Erro(w, http.StatusUnauthorized, err)
+	}
+
+	parameters := mux.Vars(r)
+	publicationID, err := strconv.ParseUint(parameters["publicationId"], 10, 64)
+	if err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := dataBase.ConnectDataBase()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repo := repository.NewPublicationRepository(db)
+
+	publicationInTheDB, err := repo.SearchPublicationById(publicationID)
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if publicationInTheDB.AuthorId != userId {
+		response.Erro(w, http.StatusForbidden, err)
+		return
+	}
+	requestBody, err := io.ReadAll(r.Body)
+	if err != nil {
+		response.Erro(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+	var publication modells.Publication
+
+	if err := json.Unmarshal(requestBody, &publication); err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err = publication.PreparePublication(); err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err = repo.UpdatePublication(publicationID, publication); err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response.JSON(w, http.StatusNoContent, nil)
+
 }
 func DeletePublication(w http.ResponseWriter, r *http.Request) {
 
