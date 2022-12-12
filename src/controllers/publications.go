@@ -173,4 +173,43 @@ func UpdatePublication(w http.ResponseWriter, r *http.Request) {
 }
 func DeletePublication(w http.ResponseWriter, r *http.Request) {
 
+	userId, err := authentication.ExtracUserID(r)
+	if err != nil {
+		response.Erro(w, http.StatusUnauthorized, err)
+	}
+
+	parameters := mux.Vars(r)
+	publicationID, err := strconv.ParseUint(parameters["publicationId"], 10, 64)
+	if err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := dataBase.ConnectDataBase()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repo := repository.NewPublicationRepository(db)
+
+	publicationInTheDB, err := repo.SearchPublicationById(publicationID)
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if publicationInTheDB.AuthorId != userId {
+		response.Erro(w, http.StatusForbidden, err)
+		return
+	}
+
+	if err = repo.DeletePublication(publicationID); err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response.JSON(w, http.StatusNoContent, nil)
 }
