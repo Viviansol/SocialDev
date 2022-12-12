@@ -5,12 +5,14 @@ import (
 	"log"
 	"net/http"
 	"webApp/src/router"
+	"webApp/src/utils"
 )
 
 func main() {
-
-	fmt.Println("rodando")
+	utils.LoadTemplates()
 	r := router.Generate()
-	log.Fatalln(http.ListenAndServe(":3000", r))
+	fmt.Println("rodando")
+
+	log.Fatalln(http.ListenAndServe(":3080", r))
 
 }
