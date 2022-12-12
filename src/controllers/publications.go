@@ -213,3 +213,32 @@ func DeletePublication(w http.ResponseWriter, r *http.Request) {
 
 	response.JSON(w, http.StatusNoContent, nil)
 }
+
+func SearchPublicationsByUSer(w http.ResponseWriter, r *http.Request) {
+
+	parameters := mux.Vars(r)
+	userId, err := strconv.ParseUint(parameters["userID"], 10, 64)
+	if err != nil {
+		response.Erro(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := dataBase.ConnectDataBase()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repo := repository.NewPublicationRepository(db)
+
+	publications, err := repo.SearchPublicationsByUser(userId)
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	response.JSON(w, http.StatusOK, publications)
+
+}
