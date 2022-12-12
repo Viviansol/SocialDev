@@ -56,3 +56,9 @@ CREATE TABLE publications(
 
 
 )ENGINE = INNODB;
+
+INSERT INTO publications( title, content, authorid) values ("title", "content", 1 );
+INSERT INTO publications( title, content, authorid) values ("title2", "content2", 2 );
+INSERT INTO publications( title, content, authorid) values ("title3", "content3", 3 );
+
+

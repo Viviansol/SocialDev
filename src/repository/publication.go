@@ -62,3 +62,39 @@ func (repository Publications) SearchPublicationById(publicationId uint64) (mode
 	return publication, nil
 
 }
+
+func (repository Publications) SearchPublications(userId uint64) ([]modells.Publication, error) {
+
+	rows, err := repository.db.Query(`
+		select distinct p.* , u.nick, from publications p 
+		inner join users u on u.id=p.authorId
+		inner join followers s on p.authorId = s.user_id
+		where u.id = ? or s.followerId = ?`,
+		userId, userId,
+
+	)
+
+	if err != nil {
+		return []modells.Publication{}, err
+	}
+	var publications []modells.Publication
+	for rows.Next() {
+		var publication modells.Publication
+
+		if err = rows.Scan(
+			&publication.Id,
+			&publication.Title,
+			&publication.Content,
+			&publication.Likes,
+			&publication.CreatedAt,
+			&publication.AuthorNick,
+		); err != nil {
+			return nil, err
+		}
+
+		publications = append(publications, publication)
+
+	}
+
+	return publications, nil
+}
