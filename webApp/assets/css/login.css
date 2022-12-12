@@ -1,0 +1,96 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    font-family: Georgia;
+    background-color: black;
+
+}
+
+a{
+    font-size: 16px;
+    color: yellow;
+    line-height: 1.4;
+
+}
+
+a:hover{
+    text-decoration: none;
+}
+
+input{
+    outline: none;
+    border: none;
+    color: yellow;
+    line-height: 1.2;
+    font-size: 18px;
+    display: block;
+    width: 100%;
+    background: transparent;
+    height: 62px;
+    padding: 0 20px 0 38px;
+
+}
+
+input::placeholder{
+    color: yellow;
+}
+
+.container-login{
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+
+}
+
+.container-login > div{
+    width: 390px;
+    background-color: black;
+
+    border-radius: 10px;
+    color: white;
+    position: relative;
+    padding: 50px 0 90px 0;
+
+
+}
+
+.social-form > span{
+
+    font-size: 30px;
+    color: yellow;
+    line-height: 1.2;
+    text-align: center;
+    width: 100%;
+    display: block;
+    padding-bottom: 30px;
+}
+.social-form > div {
+    width: 100%;
+    position: relative;
+    background-color: darkgray;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    margin-bottom: 16px;
+}
+
+.btn-submit{
+    font-size: 16px;
+    color: black;
+    line-height: 1.2;
+    padding: 0 20px;
+    width: 100%;
+    height: 62px;
+    background-color: yellow;
+    outline: none;
+    border: none;
+}
+
+.btn-submit:hover{
+    cursor: pointer;
+
+}
