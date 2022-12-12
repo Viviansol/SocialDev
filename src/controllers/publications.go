@@ -242,3 +242,30 @@ func SearchPublicationsByUSer(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, publications)
 
 }
+
+func LikePublication(w http.ResponseWriter, r *http.Request) {
+
+	parameters := mux.Vars(r)
+	publicationId, err := strconv.ParseUint(parameters["publicationId"], 10, 64)
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	db, err := dataBase.ConnectDataBase()
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repo := repository.NewPublicationRepository(db)
+
+	if err := repo.LikePublication(publicationId); err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+	}
+
+	response.JSON(w, http.StatusNoContent, nil)
+
+}
