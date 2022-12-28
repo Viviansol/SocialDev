@@ -17,6 +17,10 @@ function createUser (event ){
             nickName:$('#nick').val(),
             password:$('#password').val(),
         }
+    }).done(function (){
+        alert("user registrated!")
+    }).fail(function (){
+        alert("cannot register user")
     })
 
 }

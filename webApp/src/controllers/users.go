@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"webApp/src/responses"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -29,4 +30,5 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	defer response.Body.Close()
 	fmt.Println(response.Body)
 
+	responses.JSON(w, response.StatusCode, nil)
 }
