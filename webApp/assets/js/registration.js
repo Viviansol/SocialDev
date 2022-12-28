@@ -1,9 +1,9 @@
-$('#form-registration').on('submit', createUser());
+$('#form-registration').on('submit', createUser);
 
 function createUser (event ){
     event.preventDefault();
 
-    if( $('#password').val() != $('#confirm-password').val()){
+    if($('#password').val() !== $('#confirm-password').val()){
         alert("Passwords are different!")
         return;
     }
