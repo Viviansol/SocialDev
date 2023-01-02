@@ -16,6 +16,7 @@ func Configure(router *mux.Router) *mux.Router {
 
 	routes := routesLogin
 	routes = append(routes, usersRoutes...)
+	routes = append(routes, mainPageRoute)
 
 	for _, route := range routes {
 		router.HandleFunc(route.URI, route.Function).Methods(route.Method)

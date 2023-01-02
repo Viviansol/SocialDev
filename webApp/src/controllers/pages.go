@@ -14,3 +14,8 @@ func LoadUserRegistrationPage(w http.ResponseWriter, r *http.Request) {
 	utils.ExecuteTemplatesA(w, "registration.html", nil)
 
 }
+
+func LoadMainPage(w http.ResponseWriter, r *http.Request) {
+
+	utils.ExecuteTemplatesA(w, "home.html", nil)
+}
