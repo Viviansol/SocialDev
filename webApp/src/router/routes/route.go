@@ -3,7 +3,7 @@ package routes
 import (
 	"github.com/gorilla/mux"
 	"net/http"
-	"webApp/middleware"
+	"webApp/src/middleware"
 )
 
 type Route struct {
