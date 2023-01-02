@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"webApp/src/config"
+	"webApp/src/cookies"
 	"webApp/src/models"
 	"webApp/src/responses"
 )
@@ -35,6 +36,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	var authData models.AuthData
 	if err := json.NewDecoder(response.Body).Decode(&authData); err != nil {
+		responses.JSON(w, http.StatusUnprocessableEntity, responses.ErrorApi{ErrorAPi: err.Error()})
+		return
+	}
+	if err = cookies.Save(w, authData.ID, authData.Token); err != nil {
 		responses.JSON(w, http.StatusUnprocessableEntity, responses.ErrorApi{ErrorAPi: err.Error()})
 		return
 	}
