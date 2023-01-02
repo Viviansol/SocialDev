@@ -19,7 +19,7 @@ function createUser (event ){
         }
     }).done(function (){
         alert("user registrated!")
-    }).fail(function (){
+    }).fail(function (err){
         alert("cannot register user")
     })
 

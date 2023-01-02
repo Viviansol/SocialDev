@@ -6,6 +6,10 @@ import (
 	"net/http"
 )
 
+type ErrorApi struct {
+	ErrorAPi string `json:"error"`
+}
+
 func JSON(w http.ResponseWriter, statusCode int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
@@ -13,4 +17,10 @@ func JSON(w http.ResponseWriter, statusCode int, data interface{}) {
 		log.Fatal(err)
 	}
 
+}
+
+func StatusCodeErrorTreatment(w http.ResponseWriter, r *http.Response) {
+	var err ErrorApi
+	json.NewDecoder(r.Body).Decode(&err)
+	JSON(w, r.StatusCode, err)
 }
