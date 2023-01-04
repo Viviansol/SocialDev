@@ -5,6 +5,12 @@
     <title>Title</title>
 </head>
 <body>
-<h2>Main page</h2>
+    <h2>Main page</h2>
+    {{ range . }}
+    <h4>{{. Title}}</h4>
+    <h4>{{. Content}}</h4>
+    <hr/>
+
+    {{end}}
 </body>
 </html>
